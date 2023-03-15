@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import TheWelcome from '../components/TheWelcome.vue'
+import { useBookmarks } from '@/stores/bookmarks'
+import BookmarkList from '@/components/BookmarkList.vue'
+
+const store = useBookmarks()
 </script>
 
 <template>
-  <main>
-    <TheWelcome />
-  </main>
+  <BookmarkList :bookmarks="store.bookmarks" />
 </template>
