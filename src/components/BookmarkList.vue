@@ -1,11 +1,18 @@
 <script setup lang="ts">
 import { computed, reactive } from 'vue'
 import type { Bookmark } from '@/bookmark'
-import BookmarkPlate from '@/components/BookmarkPlate.vue'
-import FusionInput from '@/components/FusionInput.vue'
+import BookmarkPlate from './BookmarkLane.vue'
+import FusionInput from './FusionInput.vue'
+import HashtagLabel from './HashtagLabel.vue'
+import FontAwesomeIcon from './FontAwesomeIcon.vue'
 
 const props = defineProps<{
   bookmarks: Bookmark[]
+}>()
+
+const emit = defineEmits<{
+  (e: 'click', bookmark: Bookmark): void
+  (e: 'amend', bookmark: Bookmark): void
 }>()
 
 const query = reactive([''])
@@ -24,7 +31,7 @@ const hits = computed(() =>
   )
 )
 
-const tags = computed(() => {
+const counts = computed(() => {
   const qs = query
     .slice(0, -1)
     .filter((q) => q.startsWith('#'))
@@ -44,42 +51,66 @@ const tags = computed(() => {
     .map<[string, number]>((tag) => [tag, s[tag]])
 })
 
+const tags = computed(() => counts.value.map(([tag]) => '#' + tag))
+
 function handleChange(value: string[]) {
   query.splice(0, Infinity, ...value)
 }
 </script>
 
 <template>
-  <div class="bookmarkers">
-    <FusionInput :value="query" @change="handleChange" />
-    <div class="tags">
-      <a v-for="[tag, count] in tags">#{{ tag }} ({{ count }})</a>
-    </div>
-    <BookmarkPlate v-for="hit in hits" v-bind="hit" class="bookmark" />
+  <FusionInput :value="query" :options="tags" @change="handleChange" />
+  <div class="tags">
+    <HashtagLabel v-for="[tag, count] in counts" :key="tag">{{ tag }} ({{ count }})</HashtagLabel>
   </div>
+  <BookmarkPlate
+    v-for="hit in hits"
+    v-bind="hit"
+    class="bookmark"
+    :key="hit.id"
+    @click="emit('click', hit)"
+  >
+    <div>
+      <FontAwesomeIcon icon="fa-slid fa-pen" @click.stop="emit('amend', hit)" />
+    </div>
+  </BookmarkPlate>
 </template>
 
 <style scoped>
-.bookmarks {
-}
-
 .tags {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-  padding: 16px;
-}
-
-.tags > a {
-  cursor: pointer;
+  margin-top: 8px;
 }
 
 .bookmark {
-  padding: 8px 16px;
+  margin-top: 8px;
   border-radius: 4px;
+  position: relative;
+  transition: ease-in-out 0.15s;
+}
+
+.bookmark > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 0 4px 0 4px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  opacity: 0;
+  transition: ease-in-out 0.15s;
 }
 
 .bookmark:hover {
-  background: #eee;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.bookmark:hover > div {
+  opacity: 1;
 }
 </style>

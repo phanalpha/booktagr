@@ -17,10 +17,13 @@
     "build-storybook": "build-storybook"
   },
   "dependencies": {
+    "@fontsource/lato": "^4.5.10",
+    "@fortawesome/fontawesome-svg-core": "^6.3.0",
+    "@fortawesome/free-solid-svg-icons": "^6.3.0",
+    "@fortawesome/vue-fontawesome": "^3.0.3",
     "@types/chrome": "^0.0.222",
     "pinia": "^2.0.32",
-    "vue": "^3.2.47",
-    "vue-router": "^4.1.6"
+    "vue": "^3.2.47"
   },
   "devDependencies": {
     "@babel/core": "^7.21.0",

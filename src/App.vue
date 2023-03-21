@@ -1,9 +1,9 @@
 <script setup lang="ts">
 /// <reference path="../node_modules/@types/chrome/index.d.ts" />
-import { RouterView } from 'vue-router'
 import { pack, unpack } from '@/bookmark'
 import type { _Bookmark } from '@/bookmark'
 import { useBookmarks } from '@/stores/bookmarks'
+import HomeView from "@/views/HomeView.vue";
 
 const store = useBookmarks()
 
@@ -27,7 +27,7 @@ store.$onAction(({ name, args }) => {
 </script>
 
 <template>
-  <RouterView />
+  <HomeView />
 </template>
 
 <style scoped></style>

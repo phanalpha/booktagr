@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { onMounted, reactive } from 'vue'
+import { reactive } from 'vue'
 import type { Bookmark } from '@/bookmark'
 import type { Synopsis } from '@/hashtag'
-import FusionInput from '@/components/FusionInput.vue'
+import FusionInput from './FusionInput.vue'
 
 const props = defineProps<{
   value: Bookmark
@@ -11,24 +11,24 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'save', value: Synopsis): void
-  (e: 'cancel'): void
+  (e: 'back'): void
 }>()
 
-const synopsis = reactive(props.value.synopsis)
-onMounted(() => {
-  synopsis.tags.push('')
+const synopsis = reactive({
+  title: props.value.synopsis.title,
+  tags: props.value.synopsis.tags.concat('')
 })
 
 function handleChangeTags(tags: string[]) {
   synopsis.tags.splice(0, Infinity, ...tags)
 }
 
-function handleCancel() {
-  emit('cancel')
+function handleBack() {
+  emit('back')
 }
 
 function handleSave() {
-  emit('save', { title: synopsis.title, tags: synopsis.tags.filter(s => !!s) })
+  emit('save', { title: synopsis.title, tags: synopsis.tags.filter((s) => !!s) })
 }
 </script>
 
@@ -36,66 +36,80 @@ function handleSave() {
   <form>
     <div class="lane">
       <label>Title</label>
-      <input class="input" v-model="synopsis.title" />
+      <input v-model="synopsis.title" />
     </div>
     <div class="lane">
       <label>Tags</label>
-      <FusionInput class="input" :value="synopsis.tags" @change="handleChangeTags">
-        <a v-for="tag in tags" :key="tag">{{ tag }}</a>
-      </FusionInput>
+      <FusionInput :value="synopsis.tags" :options="tags" @change="handleChangeTags" drop />
     </div>
 
-    <div class="actions">
-      <button type="reset" @click="handleCancel">Cancel</button>
+    <div class="lane">
       <button type="submit" @click.prevent="handleSave">Save</button>
+      <button type="button" class="back" @click="handleBack">Back</button>
     </div>
   </form>
 </template>
 
 <style scoped>
 .lane {
-  margin-bottom: 16px;
+  margin-top: 8px;
 }
 
-.lane > label {
+.lane:last-child {
+  margin-top: 16px;
+}
+
+label {
   display: block;
-  margin-left: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 4px;
 }
 
-.input {
+input {
   box-sizing: border-box;
   width: 100%;
   min-height: 40px;
-  margin-top: 8px;
-  padding: 0 16px;
-  border: 1px solid #eee;
+  padding: 0 8px;
+  border: 1px solid rgba(34, 36, 38, 0.15);
   border-radius: 4px;
   outline: none;
+  font-size: 13px;
 }
 
-.input:focus,
-.input:has(input:focus) {
-  padding: 0 15px;
-  border: 2px solid #1ea7fd;
-}
-
-.actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 32px;
-}
-
-button {
-  min-width: 80px;
-  height: 32px;
-  padding: 0 16px;
-  background: #eee;
-  border: none;
-  border-radius: 2px;
+input:focus {
+  border-color: rgba(34, 36, 38, 0.35);
 }
 
 button[type='submit'] {
-  background: #1ea7fd;
+  width: 72px;
+  height: 36px;
+  background: hsl(160, 100%, 37%, 0.8);
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 700;
   color: white;
+  transition: ease-in-out .15s;
+}
+
+button[type='submit']:hover {
+  background: hsl(160, 100%, 37%);
+}
+
+.back {
+  padding: 0;
+  margin-left: 16px;
+  background: none;
+  border: none;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: underline;
+  color: rgba(0, 0, 0, .6);
+  transition: ease-in-out .15s;
+}
+
+.back:hover {
+  color: rgba(0, 0, 0, .8);
 }
 </style>

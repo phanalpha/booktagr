@@ -1,5 +1,6 @@
 import BookmarkList from './BookmarkList.vue'
 import type { StoryFn } from '@storybook/vue3'
+import { action } from '@storybook/addon-actions'
 
 export default {
   component: BookmarkList
@@ -10,7 +11,11 @@ const Template: StoryFn<typeof BookmarkList> = (args) => ({
   setup() {
     return { args }
   },
-  template: '<BookmarkList v-bind="args" />'
+  template: '<BookmarkList v-bind="args" @click="handleClick" @amend="handleAmend" />',
+  methods: {
+    handleClick: action('click'),
+    handleAmend: action('amend')
+  }
 })
 
 export const Default = Template.bind({})
