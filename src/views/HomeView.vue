@@ -7,6 +7,10 @@ import FontAwesomeIcon from '../components/FontAwesomeIcon.vue'
 import type { Bookmark } from '@/bookmark'
 import type { Synopsis } from '@/hashtag'
 
+const emit = defineEmits<{
+  (e: 'click', bookmark: Bookmark): void
+}>()
+
 const store = useBookmarks()
 const amend = ref()
 const active = ref(false)
@@ -38,7 +42,11 @@ function handleSave(synopsis: Synopsis) {
 </script>
 
 <template>
-  <BookmarkList :bookmarks="store.bookmarks" @amend="handleAmend" />
+  <BookmarkList
+    :bookmarks="store.bookmarks"
+    @click="(b) => emit('click', b)"
+    @amend="handleAmend"
+  />
   <div class="modal" :class="{ active }">
     <template v-if="amend">
       <div class="close">

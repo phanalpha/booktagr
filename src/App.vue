@@ -1,9 +1,10 @@
 <script setup lang="ts">
 /// <reference path="../node_modules/@types/chrome/index.d.ts" />
 import { pack, unpack } from '@/bookmark'
-import type { _Bookmark } from '@/bookmark'
 import { useBookmarks } from '@/stores/bookmarks'
-import HomeView from "@/views/HomeView.vue";
+import HomeView from '@/views/HomeView.vue'
+
+import type { Bookmark, _Bookmark } from '@/bookmark'
 
 const store = useBookmarks()
 
@@ -24,10 +25,15 @@ store.$onAction(({ name, args }) => {
     chrome.bookmarks.update(id, { title })
   }
 })
+
+function handleClick(bookmark: Bookmark) {
+  chrome.tabs.update({ url: bookmark.url })
+  window.close()
+}
 </script>
 
 <template>
-  <HomeView />
+  <HomeView @click="handleClick" />
 </template>
 
 <style scoped></style>
