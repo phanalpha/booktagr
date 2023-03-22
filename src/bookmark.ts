@@ -1,5 +1,5 @@
 /// <reference path="../node_modules/@types/chrome/index.d.ts" />
-import { pack as _pack, unpack as _unpack } from '@/hashtag'
+import { pack as _pack, unpack as _unpack } from './hashtag'
 import type { Synopsis } from '@/hashtag'
 
 export interface Bookmark {
@@ -38,4 +38,17 @@ function faviconURL(pageUrl: string) {
   url.searchParams.set('size', '32')
 
   return url.toString()
+}
+
+export function countTags(bs: Bookmark[]): Array<[string, number]> {
+  const counts: Record<string, number> = {}
+  for (const b of bs) {
+    for (const t of b.synopsis.tags) {
+      counts[t] = 1 + (counts[t] || 0)
+    }
+  }
+
+  return Object.keys(counts)
+    .sort()
+    .map((tag) => [tag, counts[tag]])
 }

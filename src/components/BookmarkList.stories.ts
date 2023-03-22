@@ -1,6 +1,6 @@
-import BookmarkList from './BookmarkList.vue'
 import type { StoryFn } from '@storybook/vue3'
 import { action } from '@storybook/addon-actions'
+import BookmarkList from './BookmarkList.vue'
 
 export default {
   component: BookmarkList
@@ -11,10 +11,18 @@ const Template: StoryFn<typeof BookmarkList> = (args) => ({
   setup() {
     return { args }
   },
-  template: '<BookmarkList v-bind="args" @click="handleClick" @amend="handleAmend" />',
+  template: `
+    <BookmarkList
+      v-bind="args"
+      @click="handleClick"
+      @amend="handleAmend"
+      @check="handleCheck"
+    />
+  `,
   methods: {
     handleClick: action('click'),
-    handleAmend: action('amend')
+    handleAmend: action('amend'),
+    handleCheck: action('check')
   }
 })
 
@@ -45,5 +53,13 @@ Default.args = {
       url: 'https://tree-sitter.github.io/tree-sitter/',
       favicon: 'https://tree-sitter.github.io/tree-sitter/assets/images/favicon-32x32.png'
     }
+  ],
+  tags: [
+    ['c', 1],
+    ['javascript', 2],
+    ['parser', 1],
+    ['store', 1],
+    ['vue', 2]
   ]
 }
+export const Empty = Template.bind({})

@@ -1,79 +1,39 @@
 <script setup lang="ts">
-import { computed, reactive } from 'vue'
-import type { Bookmark } from '@/bookmark'
-import BookmarkPlate from './BookmarkLane.vue'
-import FusionInput from './FusionInput.vue'
+import BookmarkLane from './BookmarkLane.vue'
 import HashtagLabel from './HashtagLabel.vue'
 import FontAwesomeIcon from './FontAwesomeIcon.vue'
+import type { Bookmark } from '@/bookmark'
 
-const props = defineProps<{
+defineProps<{
   bookmarks: Bookmark[]
+  tags: Array<[string, number]>
 }>()
 
 const emit = defineEmits<{
   (e: 'click', bookmark: Bookmark): void
   (e: 'amend', bookmark: Bookmark): void
+  (e: 'check', tag: string): void
 }>()
-
-const query = reactive([''])
-
-const hits = computed(() =>
-  query.reduce(
-    (bookmarks: Bookmark[], q: string, i) =>
-      bookmarks.filter(({ synopsis: { title, tags }, url }) =>
-        q.startsWith('#')
-          ? i < query.length - 1
-            ? tags.includes(q.slice(1))
-            : tags.find((tag) => tag.startsWith(q.slice(1)))
-          : title.includes(q) || url.includes(q)
-      ),
-    props.bookmarks
-  )
-)
-
-const counts = computed(() => {
-  const qs = query
-    .slice(0, -1)
-    .filter((q) => q.startsWith('#'))
-    .map((q) => q.slice(1))
-  const s = hits.value.reduce<Record<string, number>>(
-    (stat, bookmark) =>
-      bookmark.synopsis.tags.reduce(
-        (st, tag) => Object.assign(st, { [tag]: 1 + (st[tag] || 0) }),
-        stat
-      ),
-    {}
-  )
-
-  return Object.keys(s)
-    .sort()
-    .filter((tag) => !qs.includes(tag))
-    .map<[string, number]>((tag) => [tag, s[tag]])
-})
-
-const tags = computed(() => counts.value.map(([tag]) => '#' + tag))
-
-function handleChange(value: string[]) {
-  query.splice(0, Infinity, ...value)
-}
 </script>
 
 <template>
-  <FusionInput :value="query" :options="tags" @change="handleChange" />
   <div class="tags">
-    <HashtagLabel v-for="[tag, count] in counts" :key="tag">{{ tag }} ({{ count }})</HashtagLabel>
+    <HashtagLabel v-for="[tag, count] in tags" :key="tag" @click="emit('check', tag)">
+      {{ tag }} ({{ count }})
+    </HashtagLabel>
   </div>
-  <BookmarkPlate
-    v-for="hit in hits"
-    v-bind="hit"
+  <BookmarkLane
+    v-for="bookmark in bookmarks"
+    v-bind="bookmark"
     class="bookmark"
-    :key="hit.id"
-    @click="emit('click', hit)"
+    :key="bookmark.id"
+    @click="emit('click', bookmark)"
+    @check="(tag) => emit('check', tag)"
   >
     <div>
-      <FontAwesomeIcon icon="fa-slid fa-pen" @click.stop="emit('amend', hit)" />
+      <FontAwesomeIcon icon="fa-slid fa-pen" @click.stop="emit('amend', bookmark)" />
     </div>
-  </BookmarkPlate>
+  </BookmarkLane>
 </template>
 
 <style scoped>
@@ -81,7 +41,6 @@ function handleChange(value: string[]) {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-  margin-top: 8px;
 }
 
 .bookmark {
