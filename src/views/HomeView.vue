@@ -15,6 +15,12 @@ const emit = defineEmits<{
 
 const store = useBookmarks()
 const tags = computed(() => store.tags.map(([tag]) => tag))
+const pops = computed(() =>
+  Array.from(store.tags)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 21)
+    .sort()
+)
 
 const query = reactive([''])
 const matches = reactive<Array<[string, Bookmark[], Array<[string, number]>]>>([])
@@ -45,7 +51,7 @@ const hits = computed(() =>
 
       return [b2, t2]
     },
-    [store.bookmarks, store.tags]
+    [store.bookmarks, pops.value]
   )
 )
 const hitTags = computed(() => hits.value[1].map(([tag]) => '#' + tag))
@@ -109,7 +115,7 @@ function handleSave(synopsis: Synopsis) {
   left: 50%;
   opacity: 0;
   z-index: -1;
-  transition: ease-in-out 0.35s;
+  transition: 0.35s ease-in-out;
 }
 
 .modal.active {

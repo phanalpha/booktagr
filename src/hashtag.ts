@@ -16,11 +16,21 @@ export function pack({ title, tags }: Synopsis): string {
   return Array<string>().concat(title, Booktagr.Signature, tags).join(Booktagr.Separator)
 }
 
+const SignatureTag = Booktagr.Separator + Booktagr.Signature
+
 export function unpack(synopsis: string): Synopsis {
-  const [title, tags] = synopsis.split(Booktagr.Separator + Booktagr.Signature)
+  const i = synopsis.lastIndexOf(SignatureTag)
+  if (i < 0) {
+    return {
+      title: synopsis,
+      tags: []
+    }
+  }
 
   return {
-    title,
-    tags: tags?.split(Booktagr.Separator).slice(1) || []
+    title: synopsis.slice(0, i),
+    tags: synopsis
+      .slice(i + SignatureTag.length + Booktagr.Separator.length)
+      .split(Booktagr.Separator)
   }
 }

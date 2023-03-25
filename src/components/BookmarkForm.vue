@@ -90,7 +90,7 @@ button[type='submit'] {
   font-size: 14px;
   font-weight: 700;
   color: white;
-  transition: ease-in-out .15s;
+  transition: 0.15s ease-in-out;
 }
 
 button[type='submit']:hover {
@@ -105,11 +105,11 @@ button[type='submit']:hover {
   font-size: 12px;
   font-weight: 700;
   text-decoration: underline;
-  color: rgba(0, 0, 0, .6);
-  transition: ease-in-out .15s;
+  color: rgba(0, 0, 0, 0.6);
+  transition: 0.15s ease-in-out;
 }
 
 .back:hover {
-  color: rgba(0, 0, 0, .8);
+  color: rgba(0, 0, 0, 0.8);
 }
 </style>

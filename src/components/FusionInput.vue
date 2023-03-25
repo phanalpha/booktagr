@@ -61,22 +61,28 @@ function handleInput(e: Event) {
 }
 
 function handleKey(e: KeyboardEvent) {
-  const { value } = e.target as HTMLInputElement
+  const el = e.target as HTMLInputElement
 
   switch (e.key) {
     case 'Backspace':
-      if (!value) {
+      if (!el.value) {
         emit('change', init.value.slice(0, -1).concat(''))
       }
       break
 
     case 'Enter':
       e.preventDefault()
-      if (!['', '#'].includes(value)) {
+      if (!['', '#'].includes(el.value)) {
         bit.value = ''
-        emit('change', init.value.concat(value, ''))
+        emit('change', init.value.concat(el.value, ''))
       }
       break
+
+    case 'Escape':
+      if (props.drop) {
+        e.preventDefault()
+        el.blur()
+      }
   }
 }
 
@@ -156,19 +162,21 @@ input {
 
 .options {
   display: flex;
-  align-content: center;
+  align-items: center;
   flex-wrap: wrap;
   gap: 8px;
   width: 100%;
+  max-height: 200px;
   padding: 8px;
   background: white;
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.15);
   border-radius: 0 0 4px 4px;
+  overflow-y: auto;
   position: absolute;
   top: 50%;
   opacity: 0;
   z-index: -1;
-  transition: ease-in-out 0.15s;
+  transition: 0.15s ease-in-out;
 }
 
 .fusion.active:not(.inactive) .options:not(:empty) {

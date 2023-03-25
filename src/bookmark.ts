@@ -9,13 +9,13 @@ export interface Bookmark {
   favicon: string
 }
 
-export interface _Bookmark {
+export interface PackedBookmark {
   id: string
   title: string
   url: string
 }
 
-export function pack({ id, synopsis, url }: Bookmark): _Bookmark {
+export function pack({ id, synopsis, url }: Bookmark): PackedBookmark {
   return {
     id,
     title: _pack(synopsis),
@@ -23,7 +23,7 @@ export function pack({ id, synopsis, url }: Bookmark): _Bookmark {
   }
 }
 
-export function unpack({ id, title, url }: _Bookmark): Bookmark {
+export function unpack({ id, title, url }: PackedBookmark): Bookmark {
   return {
     id,
     synopsis: _unpack(title),

@@ -4,20 +4,27 @@ import { pack, unpack } from '@/bookmark'
 import { useBookmarks } from '@/stores/bookmarks'
 import HomeView from '@/views/HomeView.vue'
 
-import type { Bookmark, _Bookmark } from '@/bookmark'
+import type { Bookmark, PackedBookmark } from '@/bookmark'
 
 const store = useBookmarks()
 
-chrome.bookmarks.getTree((bookmarks_) => {
-  function rollOut(bookmarks: chrome.bookmarks.BookmarkTreeNode[]): _Bookmark[] {
-    return bookmarks.reduce<_Bookmark[]>(
-      (a, b) => a.concat(b.children ? rollOut(b.children) : (b as _Bookmark)),
-      []
-    )
-  }
+function make_squash() {
+  const bookmarks = Array<Bookmark>()
 
-  store.$reset(rollOut(bookmarks_).map(unpack))
-})
+  return function squash(bs: chrome.bookmarks.BookmarkTreeNode[]) {
+    for (const b of bs) {
+      if (b.children) {
+        squash(b.children)
+      } else {
+        bookmarks.push(unpack(b as PackedBookmark))
+      }
+    }
+
+    return bookmarks
+  }
+}
+
+chrome.bookmarks.getTree((bookmarks) => store.$reset(make_squash()(bookmarks)))
 
 store.$onAction(({ name, args }) => {
   if ('save' === name) {

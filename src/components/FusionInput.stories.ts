@@ -17,7 +17,37 @@ const Template: StoryFn<typeof FusionInput> = (args) => ({
   }
 })
 
-export const Default = Template.bind({})
-Default.args = { value: ['#Hashtag', ''], options: ['#Hashtag', '#javascript', '#vue'] }
-export const Blank = Template.bind({})
-Blank.args = { value: ['#Hashtag', ''] }
+export const Normal = Template.bind({})
+Normal.args = { value: ['#Hashtag', ''], options: ['#Hashtag', '#javascript', '#vue'] }
+export const TooManyOptions = Template.bind({})
+TooManyOptions.args = {
+  value: ['#Hashtag', ''],
+  options: [
+    '#ai',
+    '#android',
+    '#apm',
+    '#automation',
+    '#building',
+    '#c++',
+    '#cicd',
+    '#cloud',
+    '#component',
+    '#crypto',
+    '#css',
+    '#database',
+    '#dependency injection',
+    '#devops',
+    '#distributed',
+    '#dotnet',
+    '#elixir',
+    '#emacs',
+    '#erlang',
+    '#event streaming',
+    '#functional',
+    '#gateway',
+    '#geo',
+    '#go'
+  ]
+}
+export const NoOptions = Template.bind({})
+NoOptions.args = { value: ['#Hashtag', ''] }

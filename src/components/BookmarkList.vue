@@ -30,8 +30,8 @@ const emit = defineEmits<{
     @click="emit('click', bookmark)"
     @check="(tag) => emit('check', tag)"
   >
-    <div>
-      <FontAwesomeIcon icon="fa-slid fa-pen" @click.stop="emit('amend', bookmark)" />
+    <div @click.stop="emit('amend', bookmark)">
+      <FontAwesomeIcon icon="fa-slid fa-pen" class="i" />
     </div>
   </BookmarkLane>
 </template>
@@ -47,7 +47,7 @@ const emit = defineEmits<{
   margin-top: 8px;
   border-radius: 4px;
   position: relative;
-  transition: ease-in-out 0.15s;
+  transition: 0.15s ease-in-out;
 }
 
 .bookmark > div {
@@ -62,7 +62,7 @@ const emit = defineEmits<{
   top: 0;
   right: 0;
   opacity: 0;
-  transition: ease-in-out 0.15s;
+  transition: 0.15s ease-in-out;
 }
 
 .bookmark:hover {
@@ -70,6 +70,15 @@ const emit = defineEmits<{
 }
 
 .bookmark:hover > div {
+  opacity: 1;
+}
+
+.bookmark:hover > div > .i {
+  opacity: 0.5;
+  transition: 0.15s ease-in-out;
+}
+
+.bookmark:hover > div:hover > .i {
   opacity: 1;
 }
 </style>
