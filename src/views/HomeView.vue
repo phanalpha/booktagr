@@ -44,7 +44,7 @@ const hits = computed(() =>
           : bs.filter((b) => b.synopsis.tags.find((tag) => tag.startsWith(q.slice(1))))
         : bs.filter((b) => b.synopsis.title.includes(q) || b.url.includes(q))
       const t2 = countTags(b2).filter(([tag]) => {
-        const j = query.indexOf(tag)
+        const j = query.indexOf(`#${tag}`)
         return j < 0 || i < j
       })
       matches.push([q, b2, t2])
@@ -68,6 +68,10 @@ function handleAmend(bookmark: Bookmark) {
   active.value = true
 }
 
+function handleCheck(tag: string) {
+  query.splice(-1, 0, `#${tag}`)
+}
+
 function handleBack() {
   active.value = false
   setTimeout(() => (amend.value = undefined), 350)
@@ -87,6 +91,7 @@ function handleSave(synopsis: Synopsis) {
       :tags="hits[1]"
       @click="(b) => emit('click', b)"
       @amend="handleAmend"
+      @check="handleCheck"
     />
   </div>
   <div class="modal" :class="{ active }">
